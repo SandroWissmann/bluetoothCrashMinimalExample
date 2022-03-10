@@ -41,17 +41,7 @@ private slots:
 
     auto serviceUuids = mServiceScannerPtr->servicesUuids();
 
-    if (!isEq3Thermostat(serviceUuids)) {
-      qDebug() << "#########" << Q_FUNC_INFO
-               << "Unknown device found. Mac address: "
-               << mCurrentScannedDevice.address();
-    } else {
-      qDebug() << "#########" << Q_FUNC_INFO
-               << "Eq3 device found. Mac address: "
-               << mCurrentScannedDevice.address();
-
-      emit eq3DeviceFound(mCurrentScannedDevice);
-    }
+    qDebug() << "Found device with serviceUuids: " << serviceUuids;
 
     mServiceScannerPtr->disconnectFromDevice();
   }
@@ -73,6 +63,7 @@ private:
     qDebug() << "#########" << Q_FUNC_INFO;
 
     if (mScannedDevices.empty()) {
+      qDebug() << "#########" << Q_FUNC_INFO << "filteringCompleted";
       emit filteringCompleted();
     } else {
       mCurrentScannedDevice = mScannedDevices.back();

@@ -18,11 +18,10 @@ public:
     connect(mDeviceDiscoveryAgentPtr,
             &QBluetoothDeviceDiscoveryAgent::deviceDiscovered, this,
             &DeviceScanner::onAddDeviceInfo);
+
     connect(mDeviceDiscoveryAgentPtr,
-            static_cast<void (QBluetoothDeviceDiscoveryAgent::*)(
-                QBluetoothDeviceDiscoveryAgent::Error)>(
-                &QBluetoothDeviceDiscoveryAgent::error),
-            this, &DeviceScanner::onScanError);
+            &QBluetoothDeviceDiscoveryAgent::errorOccurred, this,
+            &DeviceScanner::onScanError);
 
     connect(mDeviceDiscoveryAgentPtr, &QBluetoothDeviceDiscoveryAgent::finished,
             this, &DeviceScanner::onScanCompleted);
@@ -31,15 +30,16 @@ public:
   }
 
 signals:
+  // emit when new device is discovered
   void deviceDiscovered(const QBluetoothDeviceInfo &deviceInfo);
 
+  // emit when
   void scanCompleted();
 
 public:
   void startScanning() {
     qDebug() << Q_FUNC_INFO;
 
-    mDevicesInfosPtr.clear();
     mDeviceDiscoveryAgentPtr->start(
         QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 
@@ -59,9 +59,6 @@ private slots:
              << "Found device with address:" << deviceInfo.address();
 
     emit deviceDiscovered(deviceInfo);
-
-    auto deviceInfoPtr = std::make_shared<QBluetoothDeviceInfo>(deviceInfo);
-    mDevicesInfosPtr.emplace_back(deviceInfoPtr);
   }
 
   void onScanError(QBluetoothDeviceDiscoveryAgent::Error error) {
@@ -77,7 +74,6 @@ private slots:
 
 private:
   QBluetoothDeviceDiscoveryAgent *mDeviceDiscoveryAgentPtr;
-  std::vector<std::shared_ptr<QBluetoothDeviceInfo>> mDevicesInfosPtr;
 };
 
 #endif

@@ -10,10 +10,9 @@ int main(int argc, char *argv[]) {
   QBluetoothLocalDevice bluetoothLocalDevice;
   bluetoothLocalDevice.powerOn();
 
-  DeviceScanner deviceScanner;
-  deviceScanner.startScanning();
-
   ScannedDevicesFilter scannedDevicesFilter;
+
+  DeviceScanner deviceScanner;
 
   QObject::connect(&deviceScanner, &DeviceScanner::deviceDiscovered,
                    &scannedDevicesFilter, &ScannedDevicesFilter::onAddDevice);
@@ -21,6 +20,8 @@ int main(int argc, char *argv[]) {
   QObject::connect(&deviceScanner, &DeviceScanner::scanCompleted,
                    &scannedDevicesFilter,
                    &ScannedDevicesFilter::onStartFiltering);
+
+  deviceScanner.startScanning();
 
   return a.exec();
 }

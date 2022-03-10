@@ -45,6 +45,14 @@ signals:
   void errorOccured();
 
 private slots:
+  void onStateChanged(QLowEnergyController::ControllerState state) {
+    qDebug() << Q_FUNC_INFO << "state change to: " << state;
+
+    if (state == QLowEnergyController::ControllerState::UnconnectedState) {
+      onDisconnected();
+    }
+  }
+
   void onError(QLowEnergyController::Error error) {
     QMetaEnum metaEnum = QMetaEnum::fromType<QLowEnergyService::ServiceError>();
     qDebug() << Q_FUNC_INFO << metaEnum.valueToKey(error);
@@ -61,8 +69,7 @@ private slots:
     qDebug() << Q_FUNC_INFO << "LowEnergy controller disconnected";
     qDebug() << Q_FUNC_INFO << "state" << mLowEnergyControllerPtr->state();
 
-    delete mLowEnergyControllerPtr;
-    mLowEnergyControllerPtr = nullptr;
+    mLowEnergyControllerPtr->deleteLater();
 
     emit disconnected();
   }
@@ -92,6 +99,9 @@ private:
 
     connect(mLowEnergyControllerPtr, &QLowEnergyController::disconnected, this,
             &ServiceScanner::onDisconnected);
+
+    connect(mLowEnergyControllerPtr, &QLowEnergyController::stateChanged, this,
+            &ServiceScanner::onStateChanged);
   }
 
   QLowEnergyController *mLowEnergyControllerPtr{nullptr};
