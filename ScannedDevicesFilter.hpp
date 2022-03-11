@@ -1,3 +1,6 @@
+#ifndef TEST_SCANNED_DEVICES_FILTER
+#define TEST_SCANNED_DEVICES_FILTER
+
 #include "ServiceScanner.hpp"
 
 #include <QObject>
@@ -99,3 +102,5 @@ private:
   ServiceScanner *mServiceScannerPtr;
   QBluetoothDeviceInfo mCurrentScannedDevice;
 };
+
+#endif
